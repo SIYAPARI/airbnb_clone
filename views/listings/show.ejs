@@ -11,7 +11,7 @@
         </div>
         <div class="col-6 offset-3">
             <div class="card show-card listing-card">
-                <img src="<%=listing.image%>" class="card-img-top show_img" alt="listing_img">
+                <img src="<%=listing.image.url%>" class="card-img-top show_img" alt="listing_img">
                 <div class="card-body">
                     <p class="card-text">Owned By: <i><%= listing.owner.username %></i></p>
                     <p class="card-text"><%=listing.description%></p>
