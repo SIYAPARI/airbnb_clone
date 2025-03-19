@@ -11,9 +11,8 @@ const listingSchema= new Schema ({
         type:String
     },
     image: {
-        type: String,
-        default: "https://plus.unsplash.com/premium_photo-1680339680335-7e3b8572fc00?q=80&w=775&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        set: (v) => (v === "" ? "https://plus.unsplash.com/premium_photo-1680339680335-7e3b8572fc00?q=80&w=775&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" : v), // Converts empty string to undefined
+        url:String,
+        filename:String,
     },
     price:{
         type:Number,

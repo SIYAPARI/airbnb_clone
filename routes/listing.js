@@ -4,16 +4,14 @@ const wrapasync=require("../util/wrapasync.js");
 const Listing=require("../models/listing.js");
 const {validateListing,isLoggedIn,isOwner}=require("../middleware.js");
 const listingController=require("../controllers/listing.js")
-const multer  = require('multer')
-const upload = multer({ dest: 'uploads/' })
+const multer  = require('multer');
+const {storage}=require("../cloudConfig.js");
+const upload = multer({storage});
 
 router
 .route("/")
 .get(wrapasync(listingController.index))
-// .post(isLoggedIn,validateListing,wrapasync(listingController.createListing));
-.post(upload.single('listing[image]'),(req,res)=>{
-    res.send(req.file);
-})
+.post(isLoggedIn,upload.single('listing[image]'),validateListing,wrapasync(listingController.createListing));
 
 //NEW ROUTE
 router.get("/new",isLoggedIn,listingController.renderNewForm);
