@@ -14,6 +14,7 @@ const ejsMate=require("ejs-mate");
 const ExpressError=require("./util/ExpressError.js");
 const Review=require("./models/review.js");
 const session=require("express-session");
+const MongoStore = require('connect-mongo');
 const flash=require("connect-flash");
 const passport=require("passport");
 const LocalStrategy=require("passport-local");
@@ -22,6 +23,7 @@ const User=require("./models/user.js");
 const listingRouter=require("./routes/listing.js");
 const reviewRouter=require("./routes/review.js");
 const userRouter=require("./routes/user.js");
+const { error } = require('console');
 
 app.use(express.json());  
 app.use(methodOverride('_method'));
@@ -31,9 +33,21 @@ app.use(express.urlencoded({extended:true}));
 app.set("view engine","ejs");
 app.engine("ejs",ejsMate);
 let port=8080;
-
+const dburl=process.env.ATLASDB_URL;
+const store=MongoStore.create({
+    mongoUrl:dburl,
+    crypto:{
+        secret:"process.env.SECRET"
+    },
+    touchAfter:24*3600,
+    
+});
+store.on("error",()=>{
+    console.log("Error in mongo store ",error);
+})
 const sessionOptions={
-    secret:"mysecret",
+    store,
+    secret:"process.env.SECRET",
     resave:false,
     saveUninitialized: true,
     cookie: {
@@ -42,6 +56,7 @@ const sessionOptions={
         httpOnly:true,
     }
 };
+
 app.use(session(sessionOptions));
 
 app.use(flash());
@@ -63,16 +78,17 @@ app.use("/listing",listingRouter);
 app.use("/listings/:id/reviews",reviewRouter);
 app.use("/",userRouter);
 
-
+async function main() {
+    await mongoose.connect(dburl);
+}
 main().then(()=>{
     console.log("DB connected");
 })
 .catch((e)=>{
     console.log("ERROR",e);
 });
-async function main() {
-  await mongoose.connect('mongodb://127.0.0.1:27017/wanderlust');
-}
+// let mongourl="mongodb://127.0.0.1:27017/wanderlust"
+
     
 app.listen(port,()=>{
     console.log('listening to the port');
