@@ -1,3 +1,6 @@
+//search functionality in backend
+//make the menu  buttons working , that is it displays , the pool , farms etc listing ,on the basis of selected 
+
 if(process.env.NODE_ENV !="production"){
     require('dotenv').config();
 }
@@ -40,18 +43,7 @@ const sessionOptions={
     }
 };
 app.use(session(sessionOptions));
-app.get("/",(req,res)=>{
-    if (!req.session.count){
-        req.session.count = 1;
-    }else {
-        req.session.count++;
-    }
-    
-    res.send(`Session Count: ${req.session.count}`);
-})
 
-
-// app.use(session(sessionOptions));
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
@@ -66,16 +58,6 @@ app.use((req, res, next) => {
     res.locals.currUser=req.user;
     next();
 });
-
-// app.get("/demouser",async(req,res)=>{
-//     let fakeUser=new User({
-//         email:"student@gmail.com",
-//         username:"delta-student"
-//     });
-//     let registeredUser=await User.register(fakeUser,"helloworld")
-//     res.send(registeredUser);
-// })
-
 
 app.use("/listing",listingRouter);
 app.use("/listings/:id/reviews",reviewRouter);
