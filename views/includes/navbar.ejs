@@ -34,8 +34,8 @@
           
         </div>
         <div class="ms-auto navbar-nav">
-          <form class="d-flex" role="search">
-            <input class=" search-input form-control me-2" type="search" placeholder="Search Destinations" aria-label="Search">
+          <form class="d-flex" role="search" action="/listing" method="GET">
+            <input id="search-input" class=" search-input form-control me-2" type="search" name="q" placeholder="Search Destinations" aria-label="Search" value="<%= typeof q !== 'undefined' ? q : '' %>">
             <button class="btn search-btn" type="submit"><i class="fa-solid fa-magnifying-glass"></i>Search</button>
           </form>
         </div>

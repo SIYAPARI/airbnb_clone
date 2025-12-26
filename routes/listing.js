@@ -13,6 +13,9 @@ router
 .get(wrapasync(listingController.index))
 .post(isLoggedIn,upload.single('listing[image]'),validateListing,wrapasync(listingController.createListing));
 
+// API route for dynamic search
+router.get("/api", wrapasync(listingController.apiIndex));
+
 //NEW ROUTE
 router.get("/new",isLoggedIn,listingController.renderNewForm);
 

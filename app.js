@@ -5,6 +5,7 @@ if(process.env.NODE_ENV !="production"){
     require('dotenv').config();
 }
 
+
 const express=require("express");
 const app=express();
 const mongoose=require("mongoose");
@@ -32,12 +33,12 @@ app.use(express.static(path.join(__dirname,"public")));
 app.use(express.urlencoded({extended:true}));
 app.set("view engine","ejs");
 app.engine("ejs",ejsMate);
-let port=8080;
+let port=3001;
 const dburl=process.env.ATLASDB_URL;
 const store=MongoStore.create({
     mongoUrl:dburl,
     crypto:{
-        secret:"process.env.SECRET"
+        secret:process.env.SECRET
     },
     touchAfter:24*3600,
     
@@ -47,7 +48,7 @@ store.on("error",()=>{
 })
 const sessionOptions={
     store,
-    secret:"process.env.SECRET",
+    secret:process.env.SECRET,
     resave:false,
     saveUninitialized: true,
     cookie: {
@@ -91,7 +92,7 @@ main().then(()=>{
 
     
 app.listen(port,()=>{
-    console.log('listening to the port');
+    console.log('listening to the port',port);
 })
 
 app.all("*",(req,res,next)=>{

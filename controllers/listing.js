@@ -1,8 +1,51 @@
 const Listing=require("../models/listing")
 
+function escapeRegex(text) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+}
+
 module.exports.index=async (req,res)=>{
-    const allListings=await Listing.find({})
-    res.render("./listings/index.ejs",{allListings});
+    const query = req.query.q;
+    let allListings;
+    if (query) {
+        const escapedQuery = escapeRegex(query);
+        allListings = await Listing.find({
+            $or: [
+                { title: { $regex: escapedQuery, $options: 'i' } },
+                { location: { $regex: escapedQuery, $options: 'i' } },
+                { country: { $regex: escapedQuery, $options: 'i' } },
+                { description: { $regex: escapedQuery, $options: 'i' } }
+            ]
+        });
+    } else {
+        allListings = await Listing.find({});
+    }
+    console.log(allListings);
+    res.render("./listings/index.ejs", { allListings, q: query });
+}
+
+module.exports.apiIndex = async (req, res) => {
+    try {
+        const query = req.query.q;
+        let allListings;
+        if (query) {
+            const escapedQuery = escapeRegex(query);
+            allListings = await Listing.find({
+                $or: [
+                    { title: { $regex: escapedQuery, $options: 'i' } },
+                    { location: { $regex: escapedQuery, $options: 'i' } },
+                    { country: { $regex: escapedQuery, $options: 'i' } },
+                    { description: { $regex: escapedQuery, $options: 'i' } }
+                ]
+            });
+        } else {
+            allListings = await Listing.find({});
+        }
+        res.json(allListings);
+    } catch (error) {
+        console.error('Error in apiIndex:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
 }
 
 module.exports.renderNewForm=(req,res)=>{
@@ -33,6 +76,8 @@ module.exports.createListing=async (req,res,next)=>{
     const newListing = new Listing(req.body.listing);
     newListing.owner=req.user._id;
     newListing.image={url,filename};
+    newListing.tax = Math.floor(Math.random() * 16) + 10; // Random tax 10-25%
+    console.log('Generated tax:', newListing.tax);
     await newListing.save();
     console.log("new created");
     req.flash("success","New Listing Created !");

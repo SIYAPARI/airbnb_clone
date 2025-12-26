@@ -17,6 +17,10 @@ const listingSchema= new Schema ({
     price:{
         type:Number,
     },
+    tax:{
+        type:Number,
+        default: 18
+    },
     location:{
         type:String,
     },
